@@ -1,685 +1,289 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="rosado">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberCard Pro: ¡Felices 20 Ángela! 🚀</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
-    <style>
-        :root {
-            --bg-color: #030712;
-            --card-bg: rgba(15, 23, 42, 0.88);
-            --border-color: rgba(56, 189, 248, 0.35);
-            --primary-glow: #38bdf8;
-            --secondary-glow: #a855f7;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root, [data-theme="rosado"] {
+    --bg-fondo: #f8f5f4;
+    --bg-sobre: #f6b8c1;
+    --bg-solapa: #f8c6cf;
+    --bg-tarjeta: #fff7f8;
+    --color-texto-oscuro: #1a1a1a;
+    --color-texto-claro: #3a3a3a;
+    --color-acento: #d85c74;
+    --color-chisme-bg: rgba(246, 184, 193, 0.25);
+    --border-chisme: #f6b8c1;
+  }
 
-        [data-theme="cyberpunk"] {
-            --bg-color: #12031a;
-            --card-bg: rgba(30, 15, 45, 0.92);
-            --border-color: rgba(244, 63, 94, 0.45);
-            --primary-glow: #f43f5e;
-            --secondary-glow: #ec4899;
-            --text-color: #fff1f2;
-            --text-muted: #fda4af;
-        }
+  [data-theme="dorado"] {
+    --bg-fondo: #121212;
+    --bg-sobre: #c5a059;
+    --bg-solapa: #e5c158;
+    --bg-tarjeta: #1e1e1e;
+    --color-texto-oscuro: #ffffff;
+    --color-texto-claro: #e0e0e0;
+    --color-acento: #e5c158;
+    --color-chisme-bg: rgba(197, 160, 89, 0.2);
+    --border-chisme: #c5a059;
+  }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+  [data-theme="noche"] {
+    --bg-fondo: #0b0e14;
+    --bg-sobre: #7c3aed;
+    --bg-solapa: #a78bfa;
+    --bg-tarjeta: #151922;
+    --color-texto-oscuro: #ffffff;
+    --color-texto-claro: #d1d5db;
+    --color-acento: #f472b6;
+    --color-chisme-bg: rgba(124, 58, 237, 0.2);
+    --border-chisme: #7c3aed;
+  }
+  
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg-fondo);display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Poppins',sans-serif;overflow:hidden; position: relative; transition: background 0.5s ease;}
+  
+  /* PARTICULAS DE FONDO ANIMADAS */
+  .particula {position: absolute; background: var(--bg-sobre); border-radius: 50%; pointer-events: none; animation: flotar linear infinite; opacity: 0.5;}
+  @keyframes flotar { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 50% { opacity: 0.6; } 100% { transform: translateY(-10vh) scale(1); opacity: 0; } }
 
-        body {
-            background: var(--bg-color);
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-            color: var(--text-color);
-            transition: background 0.5s ease;
-        }
+  .escena{width:100%;max-width:400px;height:100vh;max-height:800px;position:relative;display:flex;justify-content:center;align-items:center;padding:20px; z-index: 2;}
 
-        #bg-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
+  /* SOBRE */
+  .sobre{position:absolute;width:92%;height:520px;background:var(--bg-sobre);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.2);transform:rotate(-1deg);transition:all .8s cubic-bezier(.68,-0.55,.27,1.55)}
+  .sobre.abierto{transform:translateY(300px) rotate(2deg) scale(0.9);opacity:0;pointer-events:none}
+  .solapa{position:absolute;top:0;left:0;right:0;height:50%;background:var(--bg-solapa);clip-path:polygon(0 0, 100% 0, 50% 100%);z-index:2}
 
-        /* SOBRE INICIAL */
-        #envelope-screen {
-            position: fixed;
-            inset: 0;
-            background: var(--bg-color);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.6s ease;
-        }
+  /* TARJETA */
+  .tarjeta{position:relative;width:88%;background:var(--bg-tarjeta);height:90vh;max-height:650px;padding:28px 24px 20px 24px;border-radius:12px;box-shadow:0 25px 80px rgba(0,0,0,0.25);z-index:3;transform:rotate(1deg) translateY(20px);transition:all .8s cubic-bezier(.68,-0.55,.27,1.55);text-align:center;overflow-y:auto;overflow-x:hidden; scroll-behavior: smooth;}
+  .tarjeta.abierta{transform:rotate(0deg) translateY(-10px) scale(1.02)}
+  
+  /* SCROLLBAR */
+  .tarjeta::-webkit-scrollbar { width: 5px; }
+  .tarjeta::-webkit-scrollbar-track { background: transparent; }
+  .tarjeta::-webkit-scrollbar-thumb { background: var(--bg-solapa); border-radius: 10px; }
+  
+  .banderines{position:absolute;top:12px;left:0;right:0;text-align:center;font-size:22px;letter-spacing:6px;opacity:0.8}
+  .globos{position:absolute;top:18px;right:14px;font-size:42px;transform:rotate(15deg);opacity:0.8}
+  .globos::after{content:'🎈';position:absolute;left:-22px;top:12px;font-size:32px}
+  
+  .contenido{margin-top:35px; padding-bottom: 20px;}
+  
+  /* SELECTOR DE TEMAS */
+  .selector-temas {display: flex; justify-content: center; gap: 6px; margin-bottom: 15px;}
+  .btn-tema {background: rgba(255,255,255,0.15); border: 1px solid var(--border-chisme); color: var(--color-texto-oscuro); padding: 5px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.3s;}
+  .btn-tema:hover {background: var(--bg-sobre); color: white;}
 
-        .envelope {
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid var(--primary-glow);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 0 35px var(--primary-glow);
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        .envelope:hover { transform: scale(1.06); }
+  /* FOTO CON FALLBACK POR SI NO CARGA */
+  .foto-cumpleanera {width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-tarjeta); box-shadow: 0 5px 15px rgba(0,0,0,0.2); margin: 0 auto 10px auto; display: block; transition: transform 0.4s ease, filter 0.4s ease; cursor: pointer;}
+  .foto-cumpleanera:hover {transform: scale(1.08); filter: brightness(1.1);}
 
-        /* CONTROLES SUPERIORES */
-        .top-controls {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10;
-            display: flex;
-            gap: 10px;
-        }
-        .control-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 8px 14px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 12px;
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        .control-btn:hover { border-color: var(--primary-glow); }
+  .titulo{font-family:'Great Vibes',cursive;font-size:48px;line-height:0.85;color:var(--color-texto-oscuro);margin:6px 0 16px 0}
+  .texto{font-size:13px;line-height:1.65;color:var(--color-texto-claro);font-weight:300;padding:0 8px;text-align:left;}
+  
+  .fade-item {opacity: 0; transform: translateY(15px); transition: all 0.6s ease;}
+  .fade-item.visible {opacity: 1; transform: translateY(0);}
 
-        /* TARJETA PRINCIPAL */
-        .card {
-            position: relative;
-            z-index: 2;
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            padding: 25px 20px;
-            border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-            text-align: center;
-            max-width: 440px;
-            width: 90%;
-            max-height: 92vh;
-            overflow-y: auto;
-            display: none;
-            animation: fadeIn 0.8s forwards;
-        }
+  /* SECCIÓN CHISME */
+  .chisme-box {background: var(--color-chisme-bg); border: 1px dashed var(--border-chisme); border-radius: 12px; padding: 15px; margin: 18px 0; text-align: left; position: relative;}
+  .chisme-box h4 {color: var(--color-acento); font-size: 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;}
+  .chisme-box p {font-size: 12px; color: var(--color-texto-claro); margin-bottom: 10px; line-height: 1.4;}
+  .chisme-input {width: 100%; padding: 10px; border: 1px solid var(--bg-solapa); border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 12px; outline: none; background: var(--bg-tarjeta); color: var(--color-texto-oscuro); transition: border-color 0.3s;}
+  .chisme-input:focus {border-color: var(--color-acento);}
+  .chisme-respuesta {font-family: 'Caveat', cursive; font-size: 20px; color: var(--color-acento); margin-top: 10px; min-height: 20px; line-height: 1.2; text-align: center;}
 
-        model-viewer {
-            width: 100%;
-            height: 300px;
-            background: transparent;
-            --poster-color: transparent;
-            margin-bottom: 12px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-        }
+  /* BARRA DE EMOJIS INTERACTIVOS */
+  .emoji-bar {display: flex; justify-content: space-around; background: rgba(0,0,0,0.05); padding: 8px; border-radius: 50px; margin: 15px 0;}
+  .btn-emoji {background: none; border: none; font-size: 22px; cursor: pointer; transition: transform 0.2s;}
+  .btn-emoji:active {transform: scale(1.4);}
 
-        .badge {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--primary-glow), var(--secondary-glow));
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 5px 14px;
-            border-radius: 20px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+  /* EMOJIS FLOTANTES */
+  .emoji-flotante {position: fixed; font-size: 30px; user-select: none; pointer-events: none; z-index: 9999; animation: animarFlotar 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;}
+  @keyframes animarFlotar { 0% { transform: translateY(0) scale(0.5); opacity: 1; } 100% { transform: translateY(-300px) scale(1.3); opacity: 0; } }
 
-        h1 {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
+  .firma{margin-top:15px; font-size:13px; color:var(--color-texto-claro); text-align: center;}
+  .firma b{font-family:'Great Vibes',cursive; font-size:30px; font-weight:400; display:block; margin-top:2px; color:var(--color-texto-oscuro)}
+  
+  .contacto-btn {display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; background: #25D366; color: white; padding: 12px 24px; border-radius: 100px; text-decoration: none; font-weight: 600; font-size: 13px; width: 100%; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); transition: transform 0.2s;}
+  .contacto-btn:active {transform: scale(0.95);}
 
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 12.5px;
-            margin-bottom: 15px;
-        }
-
-        /* TRIVIA */
-        #trivia-section { text-align: left; margin-top: 10px; }
-        .trivia-question { font-size: 14px; font-weight: 600; color: var(--text-color); margin-bottom: 12px; }
-        .options-container { display: flex; flex-direction: column; gap: 8px; }
-        .option-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            padding: 10px 12px;
-            border-radius: 10px;
-            color: var(--text-color);
-            font-size: 13px;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s;
-        }
-        .option-btn:hover { background: rgba(56, 189, 248, 0.15); border-color: var(--primary-glow); }
-        #feedback { font-size: 12px; margin-top: 10px; color: #f43f5e; font-weight: 600; min-height: 18px; }
-
-        /* MENSAJE Y CONTENIDO */
-        #mensaje { display: none; text-align: left; font-size: 13px; line-height: 1.5; }
-        .mensaje-box {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 12px;
-            border-left: 4px solid var(--primary-glow);
-            margin-bottom: 12px;
-        }
-
-        .grid-baile { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-        .btn-small {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            padding: 8px;
-            border-radius: 10px;
-            color: var(--text-color);
-            font-weight: 600;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        .btn-small:hover { border-color: var(--primary-glow); }
-
-        .counter-box, .fortune-box {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 12px;
-        }
-        .interactive-btn {
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary-glow), var(--secondary-glow));
-            color: white;
-            border: none;
-            padding: 10px;
-            font-size: 12px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .mood-selector { display: flex; gap: 5px; margin-bottom: 10px; }
-        .mood-btn {
-            flex: 1;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border-color);
-            padding: 6px;
-            font-size: 11px;
-            color: var(--text-color);
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .mood-btn:hover { border-color: var(--primary-glow); }
-
-        /* BUZÓN DE CHISMES */
-        .gossip-network {
-            background: #000;
-            border: 1px solid var(--primary-glow);
-            padding: 12px;
-            border-radius: 10px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 11px;
-            color: #f43f5e;
-            margin-top: 10px;
-            text-align: left;
-        }
-        .gossip-network input {
-            background: transparent;
-            border: none;
-            color: #34d399;
-            font-family: inherit;
-            width: 100%;
-            outline: none;
-            margin-top: 6px;
-            font-size: 11px;
-        }
-
-        /* EMOJIS FLOTANTES */
-        .floating-emoji {
-            position: fixed;
-            bottom: 20px;
-            font-size: 30px;
-            animation: floatUp 2.5s ease-out forwards;
-            z-index: 1000;
-            pointer-events: none;
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(0.4) rotate(0deg); opacity: 1; }
-            50% { transform: translateY(-160px) scale(1.3) rotate(15deg); opacity: 0.9; }
-            100% { transform: translateY(-350px) scale(1) rotate(-15deg); opacity: 0; }
-        }
-
-        .emoji-bar { 
-            display: flex; 
-            justify-content: center; 
-            gap: 8px; 
-            margin-bottom: 10px; 
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            padding: 8px;
-            border-radius: 10px;
-        }
-        .emoji-btn { 
-            background: none; 
-            border: 1px solid transparent; 
-            cursor: pointer; 
-            font-size: 20px; 
-            transition: transform 0.2s;
-        }
-        .emoji-btn:hover { transform: scale(1.3); }
-
-        .btn-viral {
-            display: block;
-            width: 100%;
-            text-align: center;
-            margin-top: 12px;
-            padding: 10px;
-            background: rgba(255,255,255,0.06);
-            border: 1px dashed var(--border-color);
-            border-radius: 10px;
-            color: var(--primary-glow);
-            font-size: 12px;
-            font-weight: 600;
-            text-decoration: none;
-        }
-    </style>
+  .btn-celebrar{margin-top:14px;background:var(--color-texto-oscuro);color:var(--bg-tarjeta);border:0;padding:13px 28px;border-radius:100px;font-family:'Poppins';font-weight:600;font-size:13px;cursor:pointer;width:100%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.2s;}
+  .btn-celebrar:active {transform: scale(0.95);}
+  
+  /* COVER */
+  .cover{position:absolute;inset:0;background:var(--bg-tarjeta);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;cursor:pointer;z-index:10;transition:all .5s}
+  .cover.escondido{opacity:0;pointer-events:none;transform:scale(1.1)}
+  .btn-abrir{background:var(--color-texto-oscuro);color:var(--bg-tarjeta);border:0;padding:16px 24px;border-radius:100px;font-family:'Poppins';font-weight:600;font-size:12px;letter-spacing:1px;box-shadow:0 10px 20px rgba(0,0,0,0.2);animation:pulse 1.6s infinite; text-align: center; max-width: 80%; line-height: 1.4; cursor: pointer;}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  .hint{font-size:11px;letter-spacing:1.5px;opacity:0.5;font-weight:600; color:var(--color-texto-oscuro)}
+</style>
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
+<div id="fondo-particulas"></div>
 
-    <!-- MÚSICA AMBIENTAL DE FONDO -->
-    <audio id="bg-music" loop>
-        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
-    </audio>
+<div class="escena">
+  <div class="sobre" id="sobre"><div class="solapa"></div></div>
+  
+  <div class="tarjeta" id="tarjeta">
+    <div class="banderines">◥◥◥◥◥◥</div>
+    <div class="globos">🎈</div>
+    
+    <div class="contenido">
+      <!-- SELECTOR DE TEMAS DE COLOR -->
+      <div class="selector-temas fade-item">
+        <button class="btn-tema" onclick="cambiarTema('rosado')">🌸 Rosado</button>
+        <button class="btn-tema" onclick="cambiarTema('dorado')">✨ Dorado</button>
+        <button class="btn-tema" onclick="cambiarTema('noche')">🌙 Noche</button>
+      </div>
 
-    <!-- SOBRE INICIAL -->
-    <div id="envelope-screen">
-        <div class="envelope" onclick="abrirSobre()">
-            <h2>💌 Sobre Cibernético Pro</h2>
-            <p style="font-size:12px; color:var(--text-muted); margin-top:5px;">Toca para romper el sello y abrir</p>
-        </div>
+      <!-- FOTO REQUERIDA (Nombre simplificado a foto.jpg) -->
+      <img src="foto.jpg" class="foto-cumpleanera fade-item" alt="Angy" onerror="this.src='https://via.placeholder.com/150/f6b8c1/1a1a1a?text=Angy'">
+      
+      <div class="titulo fade-item">Felices 20</div>
+      
+      <div class="texto fade-item">
+        Feliz cumpleaños atrasado Angy, hoy estás en los 20's, ya eres una de las mías. Espero la hayas pasado bien, perdona si me olvidé de tu cumple, pero creo que la intención cuenta.<br><br>
+        Disfruta esta nueva etapa de tu vida y que Dios te cuide. Imagínate, somos los únicos tocayos del curso, seguiremos chismeando cosas como te gusta... jajaj. Y como te gusta el chisme, te dejé uno bueno abajo. Un abrazo gigante y bendiciones.
+      </div>
+
+      <!-- BARRA INTERACTIVA DE EMOJIS -->
+      <div class="emoji-bar fade-item">
+        <button class="btn-emoji" onclick="lanzarEmoji('👊🏻', event)">👊🏻</button>
+        <button class="btn-emoji" onclick="lanzarEmoji('❤️', event)">❤️</button>
+        <button class="btn-emoji" onclick="lanzarEmoji('✨', event)">✨</button>
+        <button class="btn-emoji" onclick="lanzarEmoji('🎊', event)">🎊</button>
+      </div>
+
+      <div class="chisme-box fade-item">
+        <h4>🤫 Chisme Exclusivo</h4>
+        <p>Me enteré de una muy buena... resulta que le gustas a alguien del curso. No pienso decirte quién es, ¡tendrás que deducirlo tú misma! 👀</p>
+        <input type="text" class="chisme-input" id="input-chisme" placeholder="Escribe aquí de quién sospechas..." onkeypress="manejarDeduccion(event)">
+        <div class="chisme-respuesta" id="chisme-respuesta"></div>
+      </div>
+
+      <a href="https://wa.me/59165153083?text=%C2%A1Hola%20tocayo!%20Ya%20le%C3%AD%20tu%20tarjeta%20y%20creo%20saber%20de%20qui%C3%A9n%20es%20el%20chisme..." target="_blank" class="contacto-btn fade-item">
+        📱 Escríbeme al WhatsApp
+      </a>
+
+      <button class="btn-celebrar fade-item" onclick="celebrar()">¡Lanzar Confeti! 🎉</button>
+      
+      <div class="firma fade-item">Con cariño, tu tocayo<b id="firma">Angel 🤙🏻</b></div>
     </div>
 
-    <!-- CONTROLES SUPERIORES -->
-    <div class="top-controls">
-        <button class="control-btn" id="music-toggle-btn" onclick="toggleMusic()" style="display:none;">🔇 Música</button>
-        <button class="control-btn" onclick="toggleTheme()">🎨 Tema</button>
+    <div class="cover" id="cover" onclick="abrirTarjeta()">
+      <div style="font-size:54px; margin-bottom: -10px;">💌</div>
+      <button class="btn-abrir">TOCA SI ERES LA RECIÉN CUMPLEAÑERA ✨</button>
+      <div class="hint">TIENES UN MENSAJE</div>
     </div>
+  </div>
+</div>
 
-    <!-- TARJETA PRINCIPAL -->
-    <div class="card">
-        <div class="badge" id="main-badge">Protocolo Ciberespacial ✨</div>
-        <h1 id="main-title">De Ángel para Ángela</h1>
-        <p class="subtitle" id="main-subtitle">Verificación de inglés requerida</p>
-        
-        <!-- TRIVIA INICIAL -->
-        <div id="trivia-section">
-            <p class="trivia-question">Question: What is your age now that you are in your 20s?</p>
-            <div class="options-container">
-                <button class="option-btn" onclick="verificarRespuesta(false)">A) I am 15 years old.</button>
-                <button class="option-btn" onclick="verificarRespuesta(true)">B) I am 20 years old!</button>
-                <button class="option-btn" onclick="verificarRespuesta(false)">C) I am 30 years old.</button>
-            </div>
-            <p id="feedback"></p>
-        </div>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script>
+  // Partículas de fondo
+  const contenedorParticulas = document.getElementById('fondo-particulas');
+  for(let i=0; i<15; i++) {
+      let particula = document.createElement('div');
+      particula.className = 'particula';
+      let tamano = Math.random() * 15 + 5;
+      particula.style.width = tamano + 'px';
+      particula.style.height = tamano + 'px';
+      particula.style.left = Math.random() * 100 + 'vw';
+      particula.style.animationDuration = (Math.random() * 5 + 5) + 's';
+      particula.style.animationDelay = (Math.random() * 5) + 's';
+      contenedorParticulas.appendChild(particula);
+  }
 
-        <!-- MENSAJE Y CONTENIDO 3D -->
-        <div id="mensaje">
-            <model-viewer id="avatar3d"
-                src="https://modelviewer.dev/shared-assets/models/RobotExpressive.glb"
-                alt="Avatar 3D interactivo"
-                animation-name="Dance" autoplay auto-rotate
-                camera-controls disable-zoom
-                camera-orbit="0deg 75deg 2.8m" field-of-view="20deg"
-                shadow-intensity="1.2" exposure="1.1">
-            </model-viewer>
+  // Cambio de temas de color
+  function cambiarTema(tema) {
+      document.documentElement.setAttribute('data-theme', tema);
+      localStorage.setItem('tema_angy', tema);
+  }
 
-            <div class="grid-baile">
-                <button class="btn-small" onclick="cambiarBaile('Wave')">Saludar 👋</button>
-                <button class="btn-small" onclick="cambiarBaile('Dance')">Bailar 💃</button>
-            </div>
+  // Carga inicial
+  window.onload = function() {
+      const temaGuardado = localStorage.getItem('tema_angy') || 'rosado';
+      cambiarTema(temaGuardado);
 
-            <!-- BOTÓN "EFECTO PUM" (Confeti + Lluvia de Emojis) -->
-            <button class="interactive-btn" onclick="lanzarExplosionPum()" style="background: linear-gradient(135deg, #f43f5e, #ec4899); font-weight: 700;">
-                💥 ¡Efecto PUM! (Confeti + 💖⭐🔥🚀) 🎉
-            </button>
+      const chismeGuardado = localStorage.getItem('sospechoso_angy');
+      if(chismeGuardado) {
+          document.getElementById('input-chisme').value = chismeGuardado;
+          document.getElementById('chisme-respuesta').innerText = "Vaya, veo que sigues pensando que es " + chismeGuardado + "... 😏";
+      }
+  };
 
-            <!-- BARRA DE REACCIONES EMOJI -->
-            <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">Reacciones flotantes en vivo:</div>
-            <div class="emoji-bar">
-                <button class="emoji-btn" onclick="lanzarEmoji('💖')">💖</button>
-                <button class="emoji-btn" onclick="lanzarEmoji('⭐')">⭐</button>
-                <button class="emoji-btn" onclick="lanzarEmoji('🔥')">🔥</button>
-                <button class="emoji-btn" onclick="lanzarEmoji('🚀')">🚀</button>
-            </div>
+  function abrirTarjeta(){
+    document.getElementById('cover').classList.add('escondido');
+    document.getElementById('tarjeta').classList.add('abierta');
+    document.getElementById('sobre').classList.add('abierto');
+    setTimeout(()=> {
+        celebrar();
+        activarFadeIn();
+    }, 500);
+  }
 
-            <div class="mensaje-box" id="typewriter-text"></div>
+  function celebrar(){
+    confetti({
+        particleCount: 150, 
+        spread: 90, 
+        origin: {y: 0.6}, 
+        colors: ['#f6b8c1', '#ffb8c6', '#ff8fab', '#e5c158', '#ffffff']
+    });
+    if(navigator.vibrate) navigator.vibrate(80);
+  }
 
-            <button class="interactive-btn" onclick="leerMensajeVoz()" style="background: rgba(56, 189, 248, 0.2); border: 1px solid var(--primary-glow); margin-bottom: 10px;">
-                🗣️ Escuchar Mensaje en Voz Alta
-            </button>
+  // Función para lanzar emojis flotantes
+  function lanzarEmoji(emoji, e) {
+    const el = document.createElement('div');
+    el.className = 'emoji-flotante';
+    el.innerText = emoji;
+    
+    let leftPos = e ? e.clientX - 15 : (Math.random() * (window.innerWidth - 40) + 20);
+    let bottomPos = e ? (window.innerHeight - e.clientY) : 20;
+    
+    el.style.left = leftPos + 'px';
+    el.style.bottom = bottomPos + 'px';
+    
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2000);
+  }
 
-            <div class="counter-box">
-                <div style="font-size:11px; color:var(--text-muted);">⏳ Tiempo exacto desde tus 20 años:</div>
-                <div id="live-counter" style="font-weight:700; color:var(--primary-glow); margin-top:2px;">Cargando...</div>
-            </div>
+  function manejarDeduccion(e) {
+      if (e.key === 'Enter') {
+          const valor = e.target.value.trim();
+          const respuesta = document.getElementById('chisme-respuesta');
+          
+          if(valor !== "") {
+              localStorage.setItem('sospechoso_angy', valor);
 
-            <div class="fortune-box">
-                <div id="fortune-output">🥠 Haz clic en el botón para tu fortuna de los 20</div>
-            </div>
-            <button class="interactive-btn" onclick="generarFortuna()">Generar Fortuna 🥠</button>
+              const respuestas = [
+                  "Interesante teoría... el tiempo lo dirá. 😏",
+                  "¡Puede ser! Estás tibia... o tal vez muy fría. 🤭",
+                  "Mmm... sospechoso, guardaré el secreto. 🤐",
+                  "Tus habilidades deductivas están a prueba. ¡Abre bien los ojos en clase! 👀"
+              ];
+              const rand = Math.floor(Math.random() * respuestas.length);
+              respuesta.innerText = respuestas[rand];
+              
+              lanzarEmoji('✨', e);
+          }
+      }
+  }
 
-            <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">Selecciona tu estado de ánimo:</div>
-            <div class="mood-selector">
-                <button class="mood-btn" onclick="cambiarMood('estudiante')">📚 Estudiante</button>
-                <button class="mood-btn" onclick="cambiarMood('fiesta')">🎉 Fiesta</button>
-                <button class="mood-btn" onclick="cambiarMood('relax')">☕ Relax</button>
-            </div>
+  function activarFadeIn() {
+      const elementos = document.querySelectorAll('.fade-item');
+      const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              if(entry.isIntersecting) {
+                  entry.target.classList.add('visible');
+              }
+          });
+      }, { threshold: 0.1 });
 
-            <!-- BUZÓN DE CHISMES -->
-            <div class="gossip-network">
-                <div style="color: var(--primary-glow); font-weight: bold; margin-bottom: 4px;">🕵️‍♀️ [Buzón de Chismes]</div>
-                <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 6px;">Escribe una palabra (ej: <b>ayuda</b>, <b>chisme</b>, <b>secreto</b>):</div>
-                <div id="gossip-output" style="color: #34d399; min-height: 20px;">Esperando palabra clave...</div>
-                <input type="text" id="gossip-input" placeholder="escribe aquí..." onkeypress="manejarChismes(event)">
-            </div>
-
-            <a class="btn-viral" href="https://wa.me/59170000000?text=Hola,%20quiero%20crear%20una%20tarjetita%20viva%203D%20personalizada" target="_blank">
-                ✨ ¿Quieres una tarjeta 3D así? ¡Crea la tuya aquí!
-            </a>
-        </div>
-    </div>
-
-    <script>
-        let musicPlaying = false;
-        const bgMusic = document.getElementById('bg-music');
-        bgMusic.volume = 0.25;
-
-        function toggleMusic() {
-            const btn = document.getElementById('music-toggle-btn');
-            if (musicPlaying) {
-                bgMusic.pause();
-                musicPlaying = false;
-                btn.innerHTML = "🔇 Música";
-            } else {
-                bgMusic.play().then(() => {
-                    musicPlaying = true;
-                    btn.innerHTML = "🔊 Música";
-                }).catch(e => console.log("Bloqueo automático"));
-            }
-        }
-
-        function lanzarExplosionPum() {
-            playSound('success');
-            const count = 220;
-            const defaults = { origin: { y: 0.7 } };
-            function fire(particleRatio, opts) {
-                confetti(Object.assign({}, defaults, opts, {
-                    particleCount: Math.floor(count * particleRatio)
-                }));
-            }
-            fire(0.25, { spread: 26, startVelocity: 55 });
-            fire(0.2, { spread: 60 });
-            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-            fire(0.1, { spread: 120, startVelocity: 45 });
-
-            const listaEmojis = ['💖', '⭐', '🔥', '🚀'];
-            for (let i = 0; i < 18; i++) {
-                setTimeout(() => {
-                    const randomEmoji = listaEmojis[Math.floor(Math.random() * listaEmojis.length)];
-                    lanzarEmoji(randomEmoji);
-                }, i * 70);
-            }
-        }
-
-        const textoVozLimpio = "Acceso concedido. Ángela, feliz cumpleaños. Entre tanta gente en el instituto de inglés, irónicamente terminamos en el mismo curso los dos únicos Ángeles. Disfruta esta tarjeta interactiva y pásala increíble en tus 20 años.";
-
-        function leerMensajeVoz() {
-            playSound('click');
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(textoVozLimpio);
-                utterance.lang = 'es-ES';
-                utterance.rate = 1.0;
-                utterance.pitch = 1.1;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        function playSound(type) {
-            try {
-                const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctxAudio.createOscillator();
-                const gain = ctxAudio.createGain();
-                
-                if (type === 'click') {
-                    osc.frequency.setValueAtTime(450, ctxAudio.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(850, ctxAudio.currentTime + 0.08);
-                    gain.gain.setValueAtTime(0.08, ctxAudio.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, ctxAudio.currentTime + 0.08);
-                    osc.connect(gain); gain.connect(ctxAudio.destination);
-                    osc.start(); osc.stop(ctxAudio.currentTime + 0.08);
-                } else if (type === 'success') {
-                    osc.frequency.setValueAtTime(523.25, ctxAudio.currentTime);
-                    osc.frequency.setValueAtTime(659.25, ctxAudio.currentTime + 0.1);
-                    osc.frequency.setValueAtTime(783.99, ctxAudio.currentTime + 0.2);
-                    gain.gain.setValueAtTime(0.1, ctxAudio.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, ctxAudio.currentTime + 0.5);
-                    osc.connect(gain); gain.connect(ctxAudio.destination);
-                    osc.start(); osc.stop(ctxAudio.currentTime + 0.5);
-                } else if (type === 'error') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(150, ctxAudio.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(80, ctxAudio.currentTime + 0.2);
-                    gain.gain.setValueAtTime(0.1, ctxAudio.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, ctxAudio.currentTime + 0.2);
-                    osc.connect(gain); gain.connect(ctxAudio.destination);
-                    osc.start(); osc.stop(ctxAudio.currentTime + 0.2);
-                }
-            } catch(e) {}
-        }
-
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let particlesArray;
-
-        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.size = Math.random() * 2 + 1;
-            }
-            update() {
-                this.x += this.vx; this.y += this.vy;
-                if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
-                if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
-            }
-            draw() {
-                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--primary-glow');
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
-            }
-        }
-
-        function initParticles() {
-            particlesArray = [];
-            for (let i = 0; i < 45; i++) particlesArray.push(new Particle());
-        }
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particlesArray.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animateParticles);
-        }
-        initParticles(); animateParticles();
-
-        function abrirSobre() {
-            playSound('success');
-            bgMusic.play().then(() => {
-                musicPlaying = true;
-                document.getElementById('music-toggle-btn').style.display = 'flex';
-                document.getElementById('music-toggle-btn').innerHTML = "🔊 Música";
-            }).catch(e => {
-                document.getElementById('music-toggle-btn').style.display = 'flex';
-            });
-
-            const screen = document.getElementById('envelope-screen');
-            screen.style.opacity = '0';
-            setTimeout(() => {
-                screen.style.display = 'none';
-                document.querySelector('.card').style.display = 'block';
-            }, 600);
-        }
-
-        function toggleTheme() {
-            playSound('click');
-            const html = document.documentElement;
-            if (html.getAttribute('data-theme') === 'cyberpunk') {
-                html.removeAttribute('data-theme');
-            } else {
-                html.setAttribute('data-theme', 'cyberpunk');
-            }
-        }
-
-        const textoEscritoVisual = "¡Acceso concedido! 🎉 Ángela, ¡feliz cumpleaños! Entre tanta gente en el instituto de inglés, irónicamente terminamos en el mismo curso los dos únicos Ángeles. ¡Disfruta esta tarjetita 3D interactiva y pásala increíble en tus 20!";
-
-        function escribirTypewriter() {
-            let i = 0;
-            const containerElem = document.getElementById('typewriter-text');
-            containerElem.innerHTML = "";
-            function escribir() {
-                if (i < textoEscritoVisual.length) {
-                    containerElem.innerHTML += textoEscritoVisual.charAt(i);
-                    i++;
-                    setTimeout(escribir, 22);
-                }
-            }
-            escribir();
-            setTimeout(() => { leerMensajeVoz(); }, 1000);
-        }
-
-        const fortunas = [
-            "🥠 Estado: 100% de éxito en inglés y cero días malos.",
-            "🥠 Profecía: Este año dominarás cualquier reto con estilo 3D.",
-            "🥠 Código 20: Diversión al máximo, puras buenas vibras y grandes momentos."
-        ];
-        function generarFortuna() {
-            playSound('click');
-            const rand = Math.floor(Math.random() * fortunas.length);
-            document.getElementById('fortune-output').innerText = fortunas[rand];
-        }
-
-        function cambiarMood(modo) {
-            playSound('click');
-            const subtitles = {
-                estudiante: "📚 Modo: Estudiante estrella de inglés activa",
-                fiesta: "🎉 Modo: Fiesta nivel 20 con avatar 3D",
-                relax: "☕ Modo: Buena vibra y relax total"
-            };
-            document.getElementById('main-subtitle').innerText = subtitles[modo];
-        }
-
-        function lanzarEmoji(emoji) {
-            playSound('click');
-            const el = document.createElement('div');
-            el.classList.add('floating-emoji');
-            el.innerText = emoji;
-            el.style.left = Math.random() * (window.innerWidth - 60) + 'px';
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 2500);
-        }
-
-        function cambiarBaile(nombreAnim){
-            playSound('click');
-            const m = document.getElementById('avatar3d');
-            try {
-                m.animationName = nombreAnim;
-                m.play();
-            } catch(e) {}
-        }
-
-        function manejarChismes(e) {
-            if (e.key === 'Enter') {
-                playSound('click');
-                const val = e.target.value.toLowerCase().trim();
-                const out = document.getElementById('gossip-output');
-                
-                if (val === 'ayuda' || val === 'help') {
-                    out.innerText = "Palabras: 'chisme', 'secreto', 'edad', 'amor', 'avatar'";
-                } else if (val === 'chisme') {
-                    out.innerText = "🤫 Dicen que el profe de inglés se asusta cuando los dos 'Ángeles' activan el avatar 3D.";
-                } else if (val === 'secreto') {
-                    out.innerText = "✨ ¡A Ángela se le da increíblemente bien el inglés!";
-                } else if (val === 'edad') {
-                    out.innerText = "🎂 ¡Confirmado! Ángela pisa fuerte sus flamantes 20 años.";
-                } else if (val === 'avatar') {
-                    out.innerText = "🤖 El modelo 3D responde a tus clics y comandos de animación.";
-                } else {
-                    out.innerText = "❌ Ups, escribe 'ayuda' para ver las palabras clave.";
-                }
-                e.target.value = '';
-            }
-        }
-
-        function actualizarContador() {
-            const birthdayDate = new Date('2026-09-22T00:00:00');
-            const diff = new Date() - birthdayDate;
-            if (diff > 0) {
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                const minutes = Math.floor((diff / 1000 / 60) % 60);
-                const seconds = Math.floor((diff / 1000) % 60);
-                document.getElementById('live-counter').innerText = `${days} días, ${hours}h, ${minutes}m, ${seconds}s`;
-            }
-        }
-
-        function verificarRespuesta(esCorrecta) {
-            const feedback = document.getElementById('feedback');
-            if (esCorrecta) {
-                playSound('success');
-                feedback.style.color = '#34d399';
-                feedback.innerText = "¡Acceso concedido! Cargando interfaz 3D...";
-                
-                lanzarExplosionPum();
-
-                setTimeout(() => {
-                    document.getElementById('trivia-section').style.display = 'none';
-                    document.getElementById('mensaje').style.display = 'block';
-                    document.getElementById('main-badge').innerText = "Nivel 20 superado ✨";
-                    escribirTypewriter();
-                    actualizarContador();
-                    setInterval(actualizarContador, 1000);
-                }, 1000);
-            } else {
-                playSound('error');
-                feedback.innerText = "¡Acceso denegado! Inténtalo de nuevo 😉.";
-            }
-        }
-    </script>
+      elementos.forEach(el => observer.observe(el));
+  }
+</script>
 </body>
 </html>
